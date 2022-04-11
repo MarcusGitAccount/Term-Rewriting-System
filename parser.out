@@ -1,0 +1,152 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> expression
+Rule 1     expression -> ID
+Rule 2     function_expression -> ZERO_ARITY
+Rule 3     function_expression -> FUNCTION_NAME LEFT_PAR expression RIGHT_PAR
+Rule 4     expression -> function_expression
+Rule 5     expression -> expression COMMA expression
+
+Terminals, with rules where they appear
+
+COMMA                : 5
+FUNCTION_NAME        : 3
+ID                   : 1
+LEFT_PAR             : 3
+RIGHT_PAR            : 3
+ZERO_ARITY           : 2
+error                : 
+
+Nonterminals, with rules where they appear
+
+expression           : 3 5 5 0
+function_expression  : 4
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . expression
+    (1) expression -> . ID
+    (4) expression -> . function_expression
+    (5) expression -> . expression COMMA expression
+    (2) function_expression -> . ZERO_ARITY
+    (3) function_expression -> . FUNCTION_NAME LEFT_PAR expression RIGHT_PAR
+
+    ID              shift and go to state 2
+    ZERO_ARITY      shift and go to state 4
+    FUNCTION_NAME   shift and go to state 5
+
+    expression                     shift and go to state 1
+    function_expression            shift and go to state 3
+
+state 1
+
+    (0) S' -> expression .
+    (5) expression -> expression . COMMA expression
+
+    COMMA           shift and go to state 6
+
+
+state 2
+
+    (1) expression -> ID .
+
+    COMMA           reduce using rule 1 (expression -> ID .)
+    $end            reduce using rule 1 (expression -> ID .)
+    RIGHT_PAR       reduce using rule 1 (expression -> ID .)
+
+
+state 3
+
+    (4) expression -> function_expression .
+
+    COMMA           reduce using rule 4 (expression -> function_expression .)
+    $end            reduce using rule 4 (expression -> function_expression .)
+    RIGHT_PAR       reduce using rule 4 (expression -> function_expression .)
+
+
+state 4
+
+    (2) function_expression -> ZERO_ARITY .
+
+    COMMA           reduce using rule 2 (function_expression -> ZERO_ARITY .)
+    $end            reduce using rule 2 (function_expression -> ZERO_ARITY .)
+    RIGHT_PAR       reduce using rule 2 (function_expression -> ZERO_ARITY .)
+
+
+state 5
+
+    (3) function_expression -> FUNCTION_NAME . LEFT_PAR expression RIGHT_PAR
+
+    LEFT_PAR        shift and go to state 7
+
+
+state 6
+
+    (5) expression -> expression COMMA . expression
+    (1) expression -> . ID
+    (4) expression -> . function_expression
+    (5) expression -> . expression COMMA expression
+    (2) function_expression -> . ZERO_ARITY
+    (3) function_expression -> . FUNCTION_NAME LEFT_PAR expression RIGHT_PAR
+
+    ID              shift and go to state 2
+    ZERO_ARITY      shift and go to state 4
+    FUNCTION_NAME   shift and go to state 5
+
+    expression                     shift and go to state 8
+    function_expression            shift and go to state 3
+
+state 7
+
+    (3) function_expression -> FUNCTION_NAME LEFT_PAR . expression RIGHT_PAR
+    (1) expression -> . ID
+    (4) expression -> . function_expression
+    (5) expression -> . expression COMMA expression
+    (2) function_expression -> . ZERO_ARITY
+    (3) function_expression -> . FUNCTION_NAME LEFT_PAR expression RIGHT_PAR
+
+    ID              shift and go to state 2
+    ZERO_ARITY      shift and go to state 4
+    FUNCTION_NAME   shift and go to state 5
+
+    expression                     shift and go to state 9
+    function_expression            shift and go to state 3
+
+state 8
+
+    (5) expression -> expression COMMA expression .
+    (5) expression -> expression . COMMA expression
+
+  ! shift/reduce conflict for COMMA resolved as shift
+    $end            reduce using rule 5 (expression -> expression COMMA expression .)
+    RIGHT_PAR       reduce using rule 5 (expression -> expression COMMA expression .)
+    COMMA           shift and go to state 6
+
+  ! COMMA           [ reduce using rule 5 (expression -> expression COMMA expression .) ]
+
+
+state 9
+
+    (3) function_expression -> FUNCTION_NAME LEFT_PAR expression . RIGHT_PAR
+    (5) expression -> expression . COMMA expression
+
+    RIGHT_PAR       shift and go to state 10
+    COMMA           shift and go to state 6
+
+
+state 10
+
+    (3) function_expression -> FUNCTION_NAME LEFT_PAR expression RIGHT_PAR .
+
+    COMMA           reduce using rule 3 (function_expression -> FUNCTION_NAME LEFT_PAR expression RIGHT_PAR .)
+    $end            reduce using rule 3 (function_expression -> FUNCTION_NAME LEFT_PAR expression RIGHT_PAR .)
+    RIGHT_PAR       reduce using rule 3 (function_expression -> FUNCTION_NAME LEFT_PAR expression RIGHT_PAR .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for COMMA in state 8 resolved as shift
