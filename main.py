@@ -1,58 +1,7 @@
-import ply.lex as lex
 import sys
 
 from parser import TRSParser
-
-# List of token names.   This is always required
-tokens = (
-    'NUMBER',
-    'PLUS',
-    'MINUS',
-    'TIMES',
-    'DIVIDE',
-    'LPAREN',
-    'RPAREN',
-)
-
-# Regular expression rules for simple tokens
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_TIMES = r'\*'
-t_DIVIDE = r'/'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-
-
-# A regular expression rule with some action code
-# Token type            t.type
-# Token value(lexeme)   t.value
-# Current line          t.lineno
-# Text position         t.lexpos
-# Compiled lexer        t.lexer
-def t_NUMBER(t):
-    r"""\-*[0-9]+"""
-    t.value = int(t.value)
-    return t
-
-
-# Define a rule so we can track line numbers
-def t_newline(t):
-    r"""\n+"""
-    t.lexer.lineno += len(t.value)
-
-
-# A string containing ignored characters (spaces and tabs)
-t_ignore = ' \t'
-
-
-# Error handling rule
-def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
-    t.lexer.skip(1)
-
-
-# Build the lexer
-lexer = lex.lex()
+from tree import print_mapping
 
 if __name__ == '__main__':
     assert len(sys.argv) == 2, "Not enough arguments supplied"
@@ -64,14 +13,52 @@ if __name__ == '__main__':
 
     parser = TRSParser(signature=signature)
     parser.build()
-    tree = parser.parse(data)
-    new = parser.parse('f(x, y)')
 
-    print(tree)
+    # tree = parser.parse("f(t, i(f(x, i(y))))")
+    # print(repr(tree))
+    # print(tree)
+    #
+    # print(tree['21'])
+    #
+    # new = parser.parse('f(x, y)')
+    # print(new)
+    #
+    # print('Replacing tree[21] with new')
+    # tree['21'] = new
+    # print(tree)
+    # print(repr(tree))
+    # test variable substitutions
+
+    tr = parser.parse('f(i(f(x, y)), f(i(y), f(y, z)))')
+    print(tr)
+    # print(repr(tr))
+    substitutions = dict(
+        x=parser.parse('f(x, i(y))'),
+        y=parser.parse('x'),
+        z=parser.parse('f(x, e)')
+    )
+
+    new = tr.copy()
+    new.substitute_variables(substitutions)
+
+    print(tr)
     print(new)
-    print(tree['21'])
 
-    print('Replacing tree[21] with new')
-    tree['21'] = new
-    print(tree)
-    # "f(t, i(f(x, i(y))))"
+    is_mapping, mapping = new.is_instance_from(tr)
+    if is_mapping:
+        print_mapping(mapping)
+
+    # print(tr)
+    # print(len(tr))
+    # print(tr.get_variable_positions())
+    # print(tr.get_variables())
+    # print(tr == tr)
+    # print(tr == parser.parse('f(x, i(y))'))
+
+
+    # parser = TRSParser(signature=signature)
+    # parser.build()
+    # tr = parser.parse('function(a)')
+
+    # print(repr(tr))
+    # print(tr)

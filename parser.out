@@ -11,13 +11,13 @@ Rule 5     expression -> expression COMMA expression
 
 Terminals, with rules where they appear
 
-COMMA                : 5
-FUNCTION_NAME        : 3
 ID                   : 1
+ZERO_ARITY           : 2
+FUNCTION_NAME        : 3
 LEFT_PAR             : 3
 RIGHT_PAR            : 3
-ZERO_ARITY           : 2
-error                : 
+COMMA                : 5
+error                :
 
 Nonterminals, with rules where they appear
 
@@ -86,12 +86,12 @@ state 5
 
 state 6
 
-    (5) expression -> expression COMMA . expression
     (1) expression -> . ID
-    (4) expression -> . function_expression
-    (5) expression -> . expression COMMA expression
     (2) function_expression -> . ZERO_ARITY
     (3) function_expression -> . FUNCTION_NAME LEFT_PAR expression RIGHT_PAR
+    (4) expression -> . function_expression
+    (5) expression -> . expression COMMA expression
+    (5) expression -> expression COMMA . expression
 
     ID              shift and go to state 2
     ZERO_ARITY      shift and go to state 4

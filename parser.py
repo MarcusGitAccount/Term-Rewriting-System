@@ -56,7 +56,7 @@ class TRSParser(object):
 
     # Check for function symbols
     def t_ID(self, t):
-        r"""[a-zA-Z_][a-zA-Z_0-9]*"""
+        r"""[a-zA-Z_0-9]+"""
         token_type = TRSParser.ID_TOKEN
 
         if t.value in self.signature:
@@ -94,9 +94,15 @@ class TRSParser(object):
     def p_function_expression_higher_arity(self, p):
         """function_expression : FUNCTION_NAME LEFT_PAR expression RIGHT_PAR"""
         children = p[3]
-        if 'i' == p[1]:
+        arity = self.signature[p[1]]
+
+        if not isinstance(children, list):
             children = [children]
-        p[0] = TreeNode(value=p[1], is_variable=False, children=children)
+
+        node = TreeNode(value=p[1], is_variable=False, children=children, arity=arity)
+        assert isinstance(children, list) and len(node.children) == arity, f'Expected arity of {arity} for \'{p[1]}\''
+
+        p[0] = node
 
     # For the expression rules we need to create the children of the parent node
     # def p_expression_term(self, p):
@@ -135,5 +141,9 @@ class TRSParser(object):
         #     self.lexer.input(literal)
         #     for tok in self.lexer:
         #         print(tok)
-        root_node = self.parser.parse(literal)
-        return Tree(root_node)
+        try:
+            root_node = self.parser.parse(literal)
+            return Tree(root=root_node, signature=self.signature)
+        except BaseException as e:
+            print(f"Invalid term\n{str(e)}")
+            return None
